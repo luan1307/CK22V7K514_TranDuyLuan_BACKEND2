@@ -2,42 +2,15 @@ const ContactService = require("../services/contact.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
-// exports.create = (req ,res) => {
-//     res.send({ message: "create handler"});
-// };
-
-// exports.findAll = (req, res) => {
-//     res.send({ message: "findAll handler"});
-// };
-
-// exports.findOne = (req, res) => {
-//     res.send({ message: "findOne handler"});
-// };
-
-// exports.update = (req, res) => {
-//     res.send({ message: "update handler"});
-// };
-
-// exports.delete = (req, res) => {
-//     res.send({ message: "delete handler"});
-// };
-
-// exports.deleteAll = (req, res) => {
-//     res.send({ message: "deleteAll handler"});
-// };
-
-// exports.findAllFavorite = (req, res) => {
-//     res.send({ message: "findAllFavorite handler"});
-// };
 
 //Create and Save a new Contact
 exports.create = async (req, res, next) => {
     if(!req.body?.name) {
-        return nexxt(new ApiError(400, "Name can not be empty"));
+        return next(new ApiError(400, "Name can not be empty"));
     }
 
     try {
-        const contactService = new ContactService(MongoDB.cllent);
+        const contactService = new ContactService(MongoDB.client);
         const document = await contactService.create(req.body);
         return res.send(document);
     } catch (error) {
@@ -55,7 +28,7 @@ exports.findAll = async (req, res, next) => {
         const contactService = new ContactService(MongoDB.client);
         const { name } = req.query;
         if (name) {
-            documents = await contactService.findByname(name);
+            documents = await contactService.findByName(name);
         } else {
             documents = await contactService.find( {} );
         }
@@ -71,7 +44,7 @@ exports.findAll = async (req, res, next) => {
 exports.findOne = async (req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
-        const document = await contactService.findById(req.parmas.id);
+        const document = await contactService.findById(req.params.id);
         if(!document) {
             return next(new ApiError(404, "Contact not found"));
         }
@@ -88,7 +61,7 @@ exports.findOne = async (req, res, next) => {
 //Update a contact by the id in the request
 exports.update = async (req, res, next) => {
     if (Object.keys(req.body).length === 0 ) {
-        return next(new ApoError(400, "Data to update can not be empty"));
+        return next(new ApiError(400, "Data to update can not be empty"));
     }
 
     try {
@@ -108,7 +81,7 @@ exports.update = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
-        const document = await contactService.delete(req.parmas.id);
+        const document = await contactService.delete(req.params.id);
         if (!document) {
             return next(new ApiError(404, "Contact not found"));
         }
@@ -117,7 +90,7 @@ exports.delete = async (req, res, next) => {
         return next(
             new ApiError(
                 500,
-                `Could not delete contact with id=${req,parmas.id}`
+                `Could not delete contact with id=${req.params.id}`
             )
         );
     }
@@ -125,7 +98,7 @@ exports.delete = async (req, res, next) => {
 //Find all favorite contacts of a user
 exports.findAllFavorite = async (_req, res, next) => {
     try {
-        const contactService = new ContactService(MongoDB,MongoDB.client);
+        const contactService = new ContactService(MongoDB.client);
         const documents = await contactService.findFavorite();
         return res.send(documents);
     } catch (error) {
