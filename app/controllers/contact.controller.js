@@ -60,7 +60,7 @@ exports.findOne = async (req, res, next) => {
 };
 //Update a contact by the id in the request
 exports.update = async (req, res, next) => {
-    if (Object.keys(req.body).length === 0 ) {
+    if (Object.keys(req.body).length == 0 ) {
         return next(new ApiError(400, "Data to update can not be empty"));
     }
 
@@ -114,7 +114,7 @@ exports.findAllFavorite = async (_req, res, next) => {
 exports.deleteAll = async (_req, res, next) => {
     try {
         const contactService = new ContactService(MongoDB.client);
-        const deleteCount = await contactService.deleteAll();
+        const deletedCount = await contactService.deleteAll();
         return res.send({
             message: `${deletedCount} contacts were deleted successfully` ,
         });
